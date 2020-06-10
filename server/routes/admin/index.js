@@ -17,7 +17,6 @@ module.exports = (app) => {
 
   router.get("/", async (req, res) => {
     const queryOptions = {};
-    console.log("req.Model.modelName::", req.Model.modelName);
     if (req.Model.modelName === "Category") {
       queryOptions.populate = "parent";
     }
