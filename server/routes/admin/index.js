@@ -1,6 +1,9 @@
 module.exports = (app) => {
   const express = require("express");
 
+  const authMid = require("../../midware/auth");
+  const resourceMid = require("../../midware/resource");
+
   const router = express.Router({
     mergeParams: true,
   });
@@ -35,13 +38,9 @@ module.exports = (app) => {
     res.send(data);
   });
 
-  app.use(
-    "/admin/api/rest/:resource",
-    async (req, res, next) => {
-      const modelName = require("inflection").classify(req.params.resource);
-      req.Model = require(`../../models/${modelName}`);
-      next();
-    },
-    router
-  );
+  app.use("/admin/api/rest/:resource", authMid(), resourceMid(), router);
+
+  app.use(async (err, req, res, next) => {
+    res.status(err.statusCode || 500).send({ message: err.message });
+  });
 };
